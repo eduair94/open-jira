@@ -1,8 +1,10 @@
-const hello = 'Hola Mundo';
-export default function Home() {
-  return (
-    <div>
-      <h1>{hello}</h1>
-    </div>
-  );
-}
+import { Typography } from '@mui/material';
+import { NextPage } from 'next';
+
+const Home: NextPage = () => (
+  <Typography variant="h1" color="primary">
+    Hola Mundo
+  </Typography>
+);
+
+export default Home;
