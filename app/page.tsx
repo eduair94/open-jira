@@ -3,7 +3,7 @@ import { NextPage } from 'next';
 
 const Home: NextPage = () => (
   <Typography variant="h1" color="primary">
-    Hola Mundo
+    Hello World
   </Typography>
 );
 
