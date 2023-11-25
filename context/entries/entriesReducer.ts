@@ -9,6 +9,10 @@ type EntriesActionType =
   | {
       type: EntryEnum.ENTRY_UPDATED;
       payload: Entry;
+    }
+  | {
+      type: EntryEnum.SET_ENTRIES;
+      payload: Entry[];
     };
 
 export const entriesReducer = (
@@ -31,6 +35,11 @@ export const entriesReducer = (
           }
           return entry;
         }),
+      };
+    case EntryEnum.SET_ENTRIES:
+      return {
+        ...state,
+        entries: action.payload,
       };
     default:
       return state;

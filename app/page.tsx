@@ -1,7 +1,6 @@
+import { EntryList, NewEntry } from '@/components/ui';
 import { Card, CardHeader, Grid } from '@mui/material';
 import { NextPage } from 'next';
-import { NewEntry } from '@/components/ui';
-import { EntryList } from '@/context/ui';
 
 const Home: NextPage = () => (
   <Grid container spacing={2}>

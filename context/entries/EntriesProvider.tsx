@@ -1,5 +1,6 @@
+import { entriesApi } from '@/apis';
 import { Entry, EntryEnum } from '@/interfaces';
-import { FC, ReactNode, useReducer } from 'react';
+import { FC, ReactNode, useEffect, useReducer } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { EntriesContext, entriesReducer } from '.';
 
@@ -8,26 +9,7 @@ export interface EntriesState {
 }
 
 const ENTRIES_INITIAL_STATE: EntriesState = {
-  entries: [
-    {
-      _id: uuidv4(),
-      description: 'Pending - lorem ipsum dolor sit amet',
-      status: 'pending',
-      createdAt: Date.now(),
-    },
-    {
-      _id: uuidv4(),
-      description: 'In Progress - Anim esse do consequat veniam veniam ea.',
-      status: 'in-progress',
-      createdAt: Date.now() - 1000000,
-    },
-    {
-      _id: uuidv4(),
-      description: 'Finished - Deserunt eiusmod esse Lorem ipsum amet.',
-      status: 'finished',
-      createdAt: Date.now() - 100000,
-    },
-  ],
+  entries: [],
 };
 
 export const EntriesProvider: FC<{ children: ReactNode }> = ({ children }) => {
@@ -47,6 +29,15 @@ export const EntriesProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const updateEntry = (entry: Entry) => {
     dispatch({ type: EntryEnum.ENTRY_UPDATED, payload: entry });
   };
+
+  const refreshEntries = async () => {
+    const { data } = await entriesApi.get<Entry[]>('/entries');
+    dispatch({ type: EntryEnum.SET_ENTRIES, payload: data });
+  };
+
+  useEffect(() => {
+    refreshEntries();
+  }, []);
 
   return (
     <EntriesContext.Provider
