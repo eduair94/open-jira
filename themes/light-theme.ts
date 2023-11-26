@@ -18,6 +18,13 @@ export const lightTheme = createTheme({
     },
   },
   components: {
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          backgroundColor: grey[100],
+        },
+      },
+    },
     MuiAppBar: {
       defaultProps: {
         elevation: 0,

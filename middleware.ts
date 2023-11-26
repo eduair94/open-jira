@@ -1,0 +1,20 @@
+import { NextRequest, NextResponse } from 'next/server';
+
+// Limit the middleware to paths starting with `/api/`
+export const config = {
+  matcher: ['/api/entries/:path*'],
+};
+
+export function middleware(req: NextRequest) {
+  if (req.nextUrl.pathname.startsWith('/api/entries/')) {
+    const id = req.nextUrl.pathname.replace('/api/entries/', '');
+    const checkMongoIdRegex = new RegExp(/^[0-9a-fA-F]{24}$/);
+    if (!checkMongoIdRegex.test(id)) {
+      const url = req.nextUrl.clone();
+      const message = `${id} is not a valid mongo id`;
+      url.pathname = '/api/bad-request/' + encodeURIComponent(message);
+      return NextResponse.rewrite(url);
+    }
+  }
+  return NextResponse.next();
+}

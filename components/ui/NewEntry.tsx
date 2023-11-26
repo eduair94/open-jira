@@ -1,16 +1,20 @@
 'use client';
-
 import { EntriesContext } from '@/context/entries';
 import { UIContext } from '@/context/ui';
+import { Entry } from '@/interfaces';
 import AddIcon from '@mui/icons-material/Add';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
-import { Box, Button, TextField } from '@mui/material';
-import { ChangeEvent, useContext, useState } from 'react';
+import { Box, Button, Collapse, TextField } from '@mui/material';
+import { ChangeEvent, useContext, useEffect, useState } from 'react';
+import { useFormState, useFormStatus } from 'react-dom';
+import { addEntryAction } from './entryActions';
 
 export const NewEntry = () => {
   const [inputValue, setInputValue] = useState('');
   const [touched, setTouched] = useState(false);
   const { addNewEntry } = useContext(EntriesContext);
+  const { pending } = useFormStatus();
+  const [formActionState, formAction] = useFormState(addEntryAction, null);
 
   const { setIsAddingEntry, isAddingEntry } = useContext(UIContext);
 
@@ -25,15 +29,6 @@ export const NewEntry = () => {
     setTouched(false);
   };
 
-  const onSave = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (inputValue.length === 0) return;
-
-    addNewEntry(inputValue);
-    setTouched(false);
-    setInputValue('');
-  };
-
   const onBlurText = (event: React.FocusEvent<HTMLInputElement>) => {
     const checkCancel = (
       event.relatedTarget as HTMLElement
@@ -43,10 +38,18 @@ export const NewEntry = () => {
     }
   };
 
+  useEffect(() => {
+    if (formActionState) {
+      addNewEntry(formActionState as Entry);
+      setTouched(false);
+      setInputValue('');
+    }
+  }, [formActionState]);
+
   return (
     <Box sx={{ marginBottom: 2, paddingX: '8px' }}>
-      {isAddingEntry ? (
-        <form onSubmit={onSave}>
+      <Collapse in={isAddingEntry}>
+        <form action={formAction}>
           <TextField
             fullWidth
             sx={{ marginTop: 2, marginBottom: 1 }}
@@ -54,8 +57,10 @@ export const NewEntry = () => {
             autoFocus
             error={inputValue.length <= 0 && touched}
             multiline
+            required
             value={inputValue}
             label="New entry"
+            name="description"
             helperText={inputValue.length <= 0 && touched && 'Enter a value'}
             onChange={onTextChanges}
             onBlur={onBlurText}
@@ -70,6 +75,7 @@ export const NewEntry = () => {
               Cancel
             </Button>
             <Button
+              disabled={pending}
               type="submit"
               variant="outlined"
               color="secondary"
@@ -79,7 +85,9 @@ export const NewEntry = () => {
             </Button>
           </Box>
         </form>
-      ) : (
+      </Collapse>
+
+      <Collapse in={!isAddingEntry} sx={{ marginTop: 2 }}>
         <Button
           startIcon={<AddIcon />}
           fullWidth
@@ -88,7 +96,7 @@ export const NewEntry = () => {
         >
           Add Task
         </Button>
-      )}
+      </Collapse>
     </Box>
   );
 };

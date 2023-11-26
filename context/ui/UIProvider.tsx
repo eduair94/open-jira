@@ -8,12 +8,14 @@ export interface UIState {
   sideMenuOpen: boolean;
   isAddingEntry: boolean;
   isDragging: boolean;
+  theme: string;
 }
 
 const UI_INITIAL_STATE: UIState = {
   sideMenuOpen: false,
   isAddingEntry: false,
   isDragging: false,
+  theme: 'dark',
 };
 
 export const UIProvider: FC<{ children: ReactNode }> = ({ children }) => {
@@ -33,6 +35,10 @@ export const UIProvider: FC<{ children: ReactNode }> = ({ children }) => {
     dispatch({ type: UIActionEnum.END_DRAGGING });
   };
 
+  const setTheme = (theme: string) => {
+    dispatch({ type: UIActionEnum.SET_THEME, payload: theme });
+  };
+
   const closeSideMenu = () => dispatch({ type: UIActionEnum.CLOSE_SIDEBAR });
   return (
     <UIContext.Provider
@@ -43,6 +49,7 @@ export const UIProvider: FC<{ children: ReactNode }> = ({ children }) => {
         setIsAddingEntry,
         startDragging,
         endDragging,
+        setTheme,
       }}
     >
       {children}

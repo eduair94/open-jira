@@ -5,14 +5,17 @@ import {
   CardActionArea,
   CardActions,
   CardContent,
+  LinearProgress,
   Typography,
 } from '@mui/material';
+import Link from 'next/link';
 import { DragEvent, FC, useContext } from 'react';
 
 interface Props {
   entry: Entry;
+  loading: boolean;
 }
-export const EntryCard: FC<Props> = ({ entry }) => {
+export const EntryCard: FC<Props> = ({ entry, loading }) => {
   const { startDragging, endDragging } = useContext(UIContext);
 
   const onDragStart = (event: DragEvent) => {
@@ -34,7 +37,8 @@ export const EntryCard: FC<Props> = ({ entry }) => {
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
     >
-      <CardActionArea>
+      {loading && <LinearProgress />}
+      <CardActionArea component={Link} href={`/entries/${entry._id}`}>
         <CardContent>
           <Typography sx={{ whiteSpace: 'pre-line' }}>
             {entry.description}

@@ -35,6 +35,7 @@
         "object-curly-newline": "off",
         "react/jsx-no-constructed-context-values": "off",
         "arrow-body-style": "off",
-        "operator-linebreak ": "off"
+        "operator-linebreak ": "off",
+        "react/prop-types": "off"
     }
 }

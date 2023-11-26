@@ -11,6 +11,8 @@ interface ContextProps {
   startDragging: () => void;
   endDragging: () => void;
   isDragging: boolean;
+  setTheme: (theme: string) => void;
+  theme: string;
 }
 
 export const UIContext = createContext({} as ContextProps);

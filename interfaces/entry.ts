@@ -6,6 +6,12 @@ export interface Entry {
   status: EntryStatus;
 }
 
+export interface EntryMin {
+  _id: string;
+  status: Entry['status'];
+  description: Entry['description'];
+}
+
 export type EntryStatus = 'pending' | 'in-progress' | 'finished';
 
 // eslint-disable-next-line no-shadow

@@ -23,7 +23,7 @@ export const entriesReducer = (
     case EntryEnum.ADD:
       return {
         ...state,
-        entries: [...state.entries, action.payload],
+        entries: [action.payload, ...state.entries],
       };
     case EntryEnum.ENTRY_UPDATED:
       return {

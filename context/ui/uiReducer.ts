@@ -17,6 +17,10 @@ type UIActionType =
     }
   | {
       type: UIActionEnum.END_DRAGGING;
+    }
+  | {
+      type: UIActionEnum.SET_THEME;
+      payload: string;
     };
 
 export const uiReducer = (state: UIState, action: UIActionType): UIState => {
@@ -45,6 +49,11 @@ export const uiReducer = (state: UIState, action: UIActionType): UIState => {
       return {
         ...state,
         isDragging: false,
+      };
+    case UIActionEnum.SET_THEME:
+      return {
+        ...state,
+        theme: action.payload,
       };
     default:
       return state;

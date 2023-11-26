@@ -1,6 +1,7 @@
+import { Layout } from '@/components/layouts';
+import { entriesServer } from '@/context/entries/entriesServer';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { Layout } from '@/components/layouts';
 import './globals.css';
 import { Providers } from './providers';
 
@@ -11,11 +12,12 @@ export const metadata: Metadata = {
   description: 'Open Jira App',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const entries = await entriesServer();
   return (
     <html lang="en">
       <head>
@@ -31,7 +33,7 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className}>
-        <Providers>
+        <Providers entries={entries}>
           <Layout>{children}</Layout>
         </Providers>
       </body>

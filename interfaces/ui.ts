@@ -4,4 +4,5 @@ export enum UIActionEnum {
   IS_ADDING_ENTRY = '[UI] - Is Adding Entry',
   START_DRAGGING = '[UI] - Start Dragging',
   END_DRAGGING = '[UI] - End Dragging',
+  SET_THEME = '[UI] - Set Theme',
 }

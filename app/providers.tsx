@@ -1,21 +1,25 @@
 'use client';
 
-import { ThemeProvider } from '@mui/material';
-import CssBaseline from '@mui/material/CssBaseline';
-import { FC, ReactNode } from 'react';
+import { ThemeLayout } from '@/components/layouts';
 import { EntriesProvider } from '@/context/entries';
 import { UIProvider } from '@/context/ui';
-import { darkTheme } from '@/themes';
+import CssBaseline from '@mui/material/CssBaseline';
+import { FC, ReactNode } from 'react';
 
-export const Providers: FC<{ children: ReactNode }> = ({ children }) => (
+interface Props {
+  children: ReactNode;
+  entries: string;
+}
+
+export const Providers: FC<Props> = ({ children, entries }) => (
   <>
     {/* <Progress /> */}
-    <EntriesProvider>
+    <EntriesProvider entries={entries}>
       <UIProvider>
-        <ThemeProvider theme={darkTheme}>
+        <ThemeLayout>
           <CssBaseline />
           {children}
-        </ThemeProvider>
+        </ThemeLayout>
       </UIProvider>
     </EntriesProvider>
   </>
