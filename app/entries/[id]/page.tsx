@@ -1,5 +1,7 @@
 'use client';
-import { EntryStatus } from '@/interfaces';
+import { updateEntry } from '@/app/api/entries/controller';
+import { updateEntryActionPage } from '@/components/ui/entryActions';
+import { Entry, EntryStatus } from '@/interfaces';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 
@@ -20,7 +22,8 @@ import {
   capitalize,
 } from '@mui/material';
 import { NextPage } from 'next';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useFormState, useFormStatus } from 'react-dom';
 
 const validStatus: EntryStatus[] = ['pending', 'in-progress', 'finished'];
 
@@ -48,13 +51,28 @@ const EntryPage: NextPage<Props> = ({ params }) => {
     [touched, inputValue],
   );
 
+  const { pending } = useFormStatus();
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [formActionState, formAction] = useFormState(
+    updateEntryActionPage,
+    entry,
+  );
+
+  useEffect(() => {
+    if (formActionState) {
+      updateEntry(JSON.parse(formActionState) as Entry, true);
+      setTouched(false);
+    }
+  }, [formActionState]);
+
   const minutes = 30;
   return (
     <div>
       <Grid container justifyContent="center" sx={{ marginTop: 2 }}>
         <Grid item xs={12} sm={8} md={6}>
           <Card>
-            <form action="">
+            <form action={formAction}>
               <CardHeader
                 title="Entry:"
                 subheader={`Created ${minutes} minutes ago`}
@@ -67,6 +85,7 @@ const EntryPage: NextPage<Props> = ({ params }) => {
                   autoFocus
                   multiline
                   required
+                  name="description"
                   helperText={isNotValid && 'Please enter a value'}
                   error={isNotValid}
                   label="New Entry"
@@ -76,7 +95,12 @@ const EntryPage: NextPage<Props> = ({ params }) => {
                 ></TextField>
                 <FormControl>
                   <FormLabel>Status:</FormLabel>
-                  <RadioGroup value={status} onChange={onStatusChanged} row>
+                  <RadioGroup
+                    name="status"
+                    value={status}
+                    onChange={onStatusChanged}
+                    row
+                  >
                     {validStatus.map((option) => (
                       <FormControlLabel
                         key={option}
@@ -90,7 +114,8 @@ const EntryPage: NextPage<Props> = ({ params }) => {
               </CardContent>
               <CardActions>
                 <Button
-                  disabled={!inputValue}
+                  type="submit"
+                  disabled={!inputValue || pending}
                   startIcon={<SaveOutlinedIcon />}
                   variant="contained"
                   fullWidth
