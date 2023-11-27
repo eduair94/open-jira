@@ -1,6 +1,6 @@
 'use client';
-import { updateEntry } from '@/app/api/entries/controller';
 import { updateEntryActionPage } from '@/components/ui/entryActions';
+import { EntriesContext } from '@/context/entries';
 import { Entry, EntryStatus } from '@/interfaces';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
@@ -22,7 +22,7 @@ import {
   capitalize,
 } from '@mui/material';
 import { NextPage } from 'next';
-import { useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { useFormState, useFormStatus } from 'react-dom';
 
 const validStatus: EntryStatus[] = ['pending', 'in-progress', 'finished'];
@@ -37,6 +37,7 @@ const EntryPage: NextPage<Props> = ({ params }) => {
   const [inputValue, setInputValue] = useState(entry.description);
   const [status, setStatus] = useState<EntryStatus>(entry.status);
   const [touched, setTouched] = useState(false);
+  const { updateEntry } = useContext(EntriesContext);
 
   const onInputValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
@@ -60,7 +61,7 @@ const EntryPage: NextPage<Props> = ({ params }) => {
   );
 
   useEffect(() => {
-    if (formActionState) {
+    if (formActionState && typeof formActionState === 'string') {
       updateEntry(JSON.parse(formActionState) as Entry, true);
       setTouched(false);
     }

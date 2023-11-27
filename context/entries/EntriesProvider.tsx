@@ -35,17 +35,21 @@ export const EntriesProvider: FC<Props> = ({ children }) => {
     dispatch({ type: EntryEnum.ADD, payload: entry });
   };
 
-  const updateEntry = (entry: Entry) => {
-    updatedId.current = { [entry._id]: true };
-    startTransitionUpdate(async () => {
-      await updateEntryAction({
-        _id: entry._id,
-        status: entry.status,
-        description: entry.description,
+  const updateEntry = (entry: Entry, clientOnly = false) => {
+    if (!clientOnly) {
+      updatedId.current = { [entry._id]: true };
+      startTransitionUpdate(async () => {
+        await updateEntryAction({
+          _id: entry._id,
+          status: entry.status,
+          description: entry.description,
+        });
+        dispatch({ type: EntryEnum.ENTRY_UPDATED, payload: entry });
+        updatedId.current = {};
       });
+    } else {
       dispatch({ type: EntryEnum.ENTRY_UPDATED, payload: entry });
-      updatedId.current = {};
-    });
+    }
   };
 
   const refreshEntries = () => {
