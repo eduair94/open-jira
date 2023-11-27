@@ -8,6 +8,8 @@ interface ContextProps {
   addNewEntry: (entry: Entry) => void;
   updateEntry: (entry: Entry) => void;
   updatedId: MutableRefObject<{ [key: string]: boolean }>;
+  refreshEntries: () => void;
+  pendingEntries: boolean;
 }
 
 export const EntriesContext = createContext({} as ContextProps);

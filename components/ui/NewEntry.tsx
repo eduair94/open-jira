@@ -40,7 +40,7 @@ export const NewEntry = () => {
 
   useEffect(() => {
     if (formActionState) {
-      addNewEntry(formActionState as Entry);
+      addNewEntry(JSON.parse(formActionState) as Entry);
       setTouched(false);
       setInputValue('');
     }

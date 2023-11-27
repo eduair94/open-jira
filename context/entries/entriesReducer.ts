@@ -37,6 +37,7 @@ export const entriesReducer = (
         }),
       };
     case EntryEnum.SET_ENTRIES:
+      console.log('update entries', action.payload);
       return {
         ...state,
         entries: action.payload,

@@ -14,6 +14,7 @@ interface Props {
 
 export const EntryList: FC<Props> = ({ status }) => {
   const { entries, updateEntry, updatedId } = useContext(EntriesContext);
+  console.log('Entries LIst', entries);
   const { isDragging, endDragging } = useContext(UIContext);
 
   const entriesByStatus = useMemo(
@@ -36,13 +37,14 @@ export const EntryList: FC<Props> = ({ status }) => {
     <div
       onDrop={onDropEntry}
       onDragOver={allowDrop}
-      style={{ height: 'calc(100% - 64px)' }}
+      style={{ height: 'auto' }}
       className={isDragging ? styles.dragging : ''}
     >
       <Paper
         sx={{
           backgroundColor: 'transparent',
           padding: '0px 8px',
+          minHeight: '350px',
         }}
       >
         <List sx={{ opacity: isDragging ? 0.2 : 1, transition: '0.3s' }}>

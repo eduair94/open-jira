@@ -8,13 +8,12 @@ import { FC, ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;
-  entries: string;
 }
 
-export const Providers: FC<Props> = ({ children, entries }) => (
+export const Providers: FC<Props> = ({ children }) => (
   <>
     {/* <Progress /> */}
-    <EntriesProvider entries={entries}>
+    <EntriesProvider>
       <UIProvider>
         <ThemeLayout>
           <CssBaseline />

@@ -4,12 +4,13 @@ import { Entry, EntryEnum } from '@/interfaces';
 import {
   FC,
   ReactNode,
-  useMemo,
+  useEffect,
   useReducer,
   useRef,
   useTransition,
 } from 'react';
 import { EntriesContext, entriesReducer } from '.';
+import { entriesServer } from './entriesServer';
 
 export interface EntriesState {
   entries: Entry[];
@@ -17,23 +18,17 @@ export interface EntriesState {
 
 interface Props {
   children: ReactNode;
-  entries: string;
 }
 
-// const ENTRIES_INITIAL_STATE: EntriesState = {
-//   entries: [],
-// };
+const ENTRIES_INITIAL_STATE: EntriesState = {
+  entries: [],
+};
 
-export const EntriesProvider: FC<Props> = ({ children, entries }) => {
-  const ENTRIES_INITIAL_STATE: EntriesState = useMemo(
-    () => ({
-      entries: JSON.parse(entries),
-    }),
-    [entries],
-  );
+export const EntriesProvider: FC<Props> = ({ children }) => {
   const [state, dispatch] = useReducer(entriesReducer, ENTRIES_INITIAL_STATE);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [pendingUpdate, startTransitionUpdate] = useTransition();
+  const [pendingEntries, startTransitionEntries] = useTransition();
   const updatedId = useRef({});
 
   const addNewEntry = (entry: Entry) => {
@@ -53,14 +48,17 @@ export const EntriesProvider: FC<Props> = ({ children, entries }) => {
     });
   };
 
-  // const refreshEntries = async () => {
-  //   const { data } = await entriesApi.get<Entry[]>('/entries');
-  //   dispatch({ type: EntryEnum.SET_ENTRIES, payload: data });
-  // };
+  const refreshEntries = () => {
+    console.log('refreshEntries');
+    startTransitionEntries(async () => {
+      const entries = JSON.parse(await entriesServer());
+      dispatch({ type: EntryEnum.SET_ENTRIES, payload: entries });
+    });
+  };
 
-  // useEffect(() => {
-  //   refreshEntries();
-  // }, []);
+  useEffect(() => {
+    refreshEntries();
+  }, []);
 
   return (
     <EntriesContext.Provider
@@ -69,6 +67,8 @@ export const EntriesProvider: FC<Props> = ({ children, entries }) => {
         addNewEntry,
         updateEntry,
         updatedId,
+        refreshEntries,
+        pendingEntries,
       }}
     >
       {children}

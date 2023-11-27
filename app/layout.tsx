@@ -1,5 +1,4 @@
 import { Layout } from '@/components/layouts';
-import { entriesServer } from '@/context/entries/entriesServer';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
@@ -17,7 +16,6 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const entries = await entriesServer();
   return (
     <html lang="en">
       <head>
@@ -33,7 +31,7 @@ export default async function RootLayout({
         />
       </head>
       <body className={inter.className}>
-        <Providers entries={entries}>
+        <Providers>
           <Layout>{children}</Layout>
         </Providers>
       </body>
