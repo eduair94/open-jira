@@ -1,8 +1,9 @@
 'use client';
+import { DeleteEntry } from '@/components/ui';
 import { EntriesContext } from '@/context/entries';
 import { updateEntryActionPage } from '@/context/entries/entryActions';
 import { Entry, EntryStatus } from '@/interfaces';
-import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import { dateFunctions } from '@/utils';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import LoadingButton from '@mui/lab/LoadingButton';
 
@@ -15,7 +16,6 @@ import {
   FormControlLabel,
   FormLabel,
   Grid,
-  IconButton,
   Radio,
   RadioGroup,
   TextField,
@@ -79,7 +79,6 @@ const EntryPage: NextPage<Props> = ({ params }) => {
     updateEntry(JSON.parse(formActionState) as Entry, true);
   }, [formActionState]);
 
-  const minutes = 30;
   return (
     <div>
       <Grid container justifyContent="center" sx={{ marginTop: 2 }}>
@@ -89,7 +88,9 @@ const EntryPage: NextPage<Props> = ({ params }) => {
               <input type="hidden" value={entry._id} name="_id" />
               <CardHeader
                 title="Entry:"
-                subheader={`Created ${minutes} minutes ago`}
+                subheader={`Created ${dateFunctions.getFormatDistanceToNow(
+                  entry.createdAt,
+                )}`}
               ></CardHeader>
               <CardContent>
                 <TextField
@@ -133,21 +134,7 @@ const EntryPage: NextPage<Props> = ({ params }) => {
           </Card>
         </Grid>
       </Grid>
-      <IconButton
-        type="submit"
-        sx={{
-          position: 'fixed',
-          bottom: 30,
-          right: 30,
-          color: 'white',
-          '&:hover': {
-            backgroundColor: 'error.dark',
-          },
-          backgroundColor: 'error.main',
-        }}
-      >
-        <DeleteOutlineOutlinedIcon />
-      </IconButton>
+      <DeleteEntry entry={entry} />
     </div>
   );
 };

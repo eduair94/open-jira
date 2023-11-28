@@ -20,4 +20,5 @@ export enum EntryEnum {
   IS_ADDING = '[Entry] - Is-Adding',
   ENTRY_UPDATED = '[Entry] - Entry-Updated',
   SET_ENTRIES = '[Entry] - Set-Entries',
+  ENTRY_DELETED = '[Entry] - Entry-Deleted',
 }

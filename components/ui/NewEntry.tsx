@@ -56,12 +56,17 @@ export const NewEntry = () => {
 
   useEffect(() => {
     if (formActionState) {
-      console.log('add new entry', formActionState);
       addNewEntry(JSON.parse(formActionState) as Entry);
       setTouched(false);
       setInputValue('');
     }
   }, [formActionState]);
+
+  useEffect(() => {
+    return () => {
+      setIsAddingEntry(false);
+    };
+  }, []);
 
   return (
     <Box sx={{ marginBottom: 2, paddingX: '8px' }}>

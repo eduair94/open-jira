@@ -1,7 +1,7 @@
 'use server';
 
-import { newEntryDB, updateEntryDB } from '@/database/dbEntries';
-import { EntryMin, EntryStatus } from '@/interfaces';
+import { deleteEntryDB, newEntryDB, updateEntryDB } from '@/database/dbEntries';
+import { Entry, EntryMin, EntryStatus } from '@/interfaces';
 import { revalidatePath } from 'next/cache';
 
 export async function addEntryAction(_prevState: unknown, formData: FormData) {
@@ -28,4 +28,8 @@ export async function updateEntryActionPage(
   revalidatePath(`/entries/${entry._id}`);
   revalidatePath('/');
   return JSON.stringify(res.body);
+}
+
+export async function deleteEntryAction(entry: Entry) {
+  await deleteEntryDB(entry._id);
 }

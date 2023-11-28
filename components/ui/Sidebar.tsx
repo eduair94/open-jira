@@ -1,5 +1,6 @@
 'use client';
 
+import { UIContext } from '@/context/ui';
 import InboxOutlined from '@mui/icons-material/InboxOutlined';
 import MailOutlineOutlined from '@mui/icons-material/MailOutlineOutlined';
 import {
@@ -13,7 +14,6 @@ import {
   Typography,
 } from '@mui/material';
 import { useContext } from 'react';
-import { UIContext } from '@/context/ui';
 
 const menuItems = ['Inbox', 'Starred', 'Send email', 'Drafts'];
 
@@ -22,7 +22,7 @@ export const Sidebar = () => {
   return (
     <Drawer anchor="left" open={sideMenuOpen} onClose={closeSideMenu}>
       <Box sx={{ width: 250 }}>
-        <Box sx={{ padding: '5px 10px' }}>
+        <Box sx={{ padding: '10px 16px 0px' }}>
           <Typography variant="h4">Menu</Typography>
         </Box>
         <List>

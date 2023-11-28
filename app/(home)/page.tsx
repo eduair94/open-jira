@@ -14,9 +14,10 @@ interface Props {
 }
 
 const Home: NextPage<Props> = ({ params }) => {
-  const { refreshEntries, entries } = useContext(EntriesContext);
+  const { refreshEntries } = useContext(EntriesContext);
+
   useEffect(() => {
-    if (!entries.length) refreshEntries(JSON.parse(params.entries));
+    refreshEntries(JSON.parse(params.entries));
   }, [params.entries]);
 
   const theme = useTheme();

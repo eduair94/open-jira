@@ -69,3 +69,7 @@ export const getEntryDB = async (id: string): Promise<IEntry | null> => {
   await db.disconnect();
   return entry;
 };
+
+export const deleteEntryDB = async (id: string) => {
+  await Entry.findByIdAndDelete(id);
+};

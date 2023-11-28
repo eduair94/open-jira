@@ -10,6 +10,5 @@ interface Props {
 
 export default async function Layout({ children, params }: Props) {
   params.entries = await entriesServer();
-  console.log('Load entries server', params.entries);
   return <>{children}</>;
 }

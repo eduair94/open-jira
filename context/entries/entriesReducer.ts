@@ -13,6 +13,10 @@ type EntriesActionType =
   | {
       type: EntryEnum.SET_ENTRIES;
       payload: Entry[];
+    }
+  | {
+      type: EntryEnum.ENTRY_DELETED;
+      payload: string;
     };
 
 export const entriesReducer = (
@@ -37,10 +41,14 @@ export const entriesReducer = (
         }),
       };
     case EntryEnum.SET_ENTRIES:
-      console.log('update entries', action.payload);
       return {
         ...state,
         entries: action.payload,
+      };
+    case EntryEnum.ENTRY_DELETED:
+      return {
+        ...state,
+        entries: state.entries.filter((entry) => entry._id !== action.payload),
       };
     default:
       return state;

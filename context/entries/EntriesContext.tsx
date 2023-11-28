@@ -9,6 +9,7 @@ interface ContextProps {
   updateEntry: (entry: Entry, clientOnly?: boolean) => void;
   updatedId: MutableRefObject<{ [key: string]: boolean }>;
   refreshEntries: (entries: Entry[]) => void;
+  deleteEntry: (entry: Entry) => void;
 }
 
 export const EntriesContext = createContext({} as ContextProps);

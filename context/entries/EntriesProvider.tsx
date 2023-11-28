@@ -20,6 +20,7 @@ const ENTRIES_INITIAL_STATE: EntriesState = {
 export const EntriesProvider: FC<Props> = ({ children }) => {
   const [state, dispatch] = useReducer(entriesReducer, ENTRIES_INITIAL_STATE);
   const { enqueueSnackbar } = useSnackbar();
+  const init = useRef(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [pendingUpdate, startTransitionUpdate] = useTransition();
   const updatedId = useRef({});
@@ -42,12 +43,27 @@ export const EntriesProvider: FC<Props> = ({ children }) => {
       });
     } else {
       dispatch({ type: EntryEnum.ENTRY_UPDATED, payload: entry });
-      enqueueSnackbar('Entry updated', { variant: 'success' });
+      enqueueSnackbar('Entry updated', {
+        variant: 'success',
+        persist: false,
+        autoHideDuration: 1500,
+      });
     }
   };
 
   const refreshEntries = (entries: Entry[]) => {
-    dispatch({ type: EntryEnum.SET_ENTRIES, payload: entries });
+    if (!init.current)
+      dispatch({ type: EntryEnum.SET_ENTRIES, payload: entries });
+    init.current = true;
+  };
+
+  const deleteEntry = (entry: Entry) => {
+    dispatch({ type: EntryEnum.ENTRY_DELETED, payload: entry._id });
+    enqueueSnackbar('Entry deleted', {
+      variant: 'error',
+      persist: false,
+      autoHideDuration: 1500,
+    });
   };
 
   return (
@@ -58,6 +74,7 @@ export const EntriesProvider: FC<Props> = ({ children }) => {
         updateEntry,
         updatedId,
         refreshEntries,
+        deleteEntry,
       }}
     >
       {children}

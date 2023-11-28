@@ -1,3 +1,4 @@
+export * from './DeleteEntry';
 export * from './EntryCard';
 export * from './Navbar';
 export * from './NewEntry';
