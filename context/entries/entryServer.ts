@@ -1,5 +1,5 @@
 'use server';
-import { getEntriesDB, getEntryDB } from '@/app/api/entries/controller';
+import { getEntriesDB, getEntryDB } from '@/database/dbEntries';
 import { isValidObjectId } from 'mongoose';
 import { RedirectType, redirect } from 'next/navigation';
 

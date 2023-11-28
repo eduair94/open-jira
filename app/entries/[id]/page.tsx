@@ -1,12 +1,12 @@
 'use client';
-import { updateEntryActionPage } from '@/components/ui/entryActions';
 import { EntriesContext } from '@/context/entries';
+import { updateEntryActionPage } from '@/context/entries/entryActions';
 import { Entry, EntryStatus } from '@/interfaces';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
+import LoadingButton from '@mui/lab/LoadingButton';
 
 import {
-  Button,
   Card,
   CardActions,
   CardContent,
@@ -22,7 +22,7 @@ import {
   capitalize,
 } from '@mui/material';
 import { NextPage } from 'next';
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { FC, useContext, useEffect, useMemo, useState } from 'react';
 import { useFormState, useFormStatus } from 'react-dom';
 
 const validStatus: EntryStatus[] = ['pending', 'in-progress', 'finished'];
@@ -30,6 +30,23 @@ const validStatus: EntryStatus[] = ['pending', 'in-progress', 'finished'];
 interface Props {
   params: { id: string; entry: string };
 }
+
+const SubmitBtn: FC<{ inputValue: string }> = ({ inputValue }) => {
+  const { pending } = useFormStatus();
+  return (
+    <LoadingButton
+      type="submit"
+      disabled={!inputValue}
+      loading={pending}
+      loadingIndicator="Loading…"
+      startIcon={<SaveOutlinedIcon />}
+      variant="contained"
+      fullWidth
+    >
+      Save
+    </LoadingButton>
+  );
+};
 
 const EntryPage: NextPage<Props> = ({ params }) => {
   const { entry: entryString } = params;
@@ -52,19 +69,14 @@ const EntryPage: NextPage<Props> = ({ params }) => {
     [touched, inputValue],
   );
 
-  const { pending } = useFormStatus();
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [formActionState, formAction] = useFormState(
     updateEntryActionPage,
-    entry,
+    null,
   );
 
   useEffect(() => {
-    if (formActionState && typeof formActionState === 'string') {
-      updateEntry(JSON.parse(formActionState) as Entry, true);
-      setTouched(false);
-    }
+    if (!formActionState) return;
+    updateEntry(JSON.parse(formActionState) as Entry, true);
   }, [formActionState]);
 
   const minutes = 30;
@@ -74,6 +86,7 @@ const EntryPage: NextPage<Props> = ({ params }) => {
         <Grid item xs={12} sm={8} md={6}>
           <Card>
             <form action={formAction}>
+              <input type="hidden" value={entry._id} name="_id" />
               <CardHeader
                 title="Entry:"
                 subheader={`Created ${minutes} minutes ago`}
@@ -114,15 +127,7 @@ const EntryPage: NextPage<Props> = ({ params }) => {
                 </FormControl>
               </CardContent>
               <CardActions>
-                <Button
-                  type="submit"
-                  disabled={!inputValue || pending}
-                  startIcon={<SaveOutlinedIcon />}
-                  variant="contained"
-                  fullWidth
-                >
-                  Save
-                </Button>
+                <SubmitBtn inputValue={inputValue} />
               </CardActions>
             </form>
           </Card>

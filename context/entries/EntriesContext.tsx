@@ -4,12 +4,11 @@ import { Entry } from '@/interfaces';
 import { MutableRefObject, createContext } from 'react';
 
 interface ContextProps {
-  entries: Entry[]; // Falta el tipo de data del array
+  entries: Entry[];
   addNewEntry: (entry: Entry) => void;
   updateEntry: (entry: Entry, clientOnly?: boolean) => void;
   updatedId: MutableRefObject<{ [key: string]: boolean }>;
-  refreshEntries: () => void;
-  pendingEntries: boolean;
+  refreshEntries: (entries: Entry[]) => void;
 }
 
 export const EntriesContext = createContext({} as ContextProps);

@@ -1,11 +1,24 @@
 'use client';
 import { NewEntry } from '@/components/ui';
 import { EntryList } from '@/components/ui/EntryList';
+import { EntriesContext } from '@/context/entries';
 import { Card, CardHeader, Grid } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { NextPage } from 'next';
+import { useContext, useEffect } from 'react';
 
-const Home: NextPage = () => {
+interface Props {
+  params: {
+    entries: string;
+  };
+}
+
+const Home: NextPage<Props> = ({ params }) => {
+  const { refreshEntries, entries } = useContext(EntriesContext);
+  useEffect(() => {
+    if (!entries.length) refreshEntries(JSON.parse(params.entries));
+  }, [params.entries]);
+
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === 'dark';
   const cardStyle = {

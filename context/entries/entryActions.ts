@@ -1,9 +1,10 @@
 'use server';
 
-import { newEntryDB, updateEntryDB } from '@/app/api/entries/controller';
+import { newEntryDB, updateEntryDB } from '@/database/dbEntries';
 import { EntryMin, EntryStatus } from '@/interfaces';
+import { revalidatePath } from 'next/cache';
 
-export async function addEntryAction(prevState: unknown, formData: FormData) {
+export async function addEntryAction(_prevState: unknown, formData: FormData) {
   const description = formData.get('description') as string;
   if (!description) return;
   const res = await newEntryDB(description);
@@ -12,19 +13,19 @@ export async function addEntryAction(prevState: unknown, formData: FormData) {
 
 export async function updateEntryAction(entry: EntryMin) {
   await updateEntryDB(entry._id, entry);
-  return;
 }
 
 export async function updateEntryActionPage(
-  prevState: { _id: string },
+  _prevState: unknown,
   formData: FormData,
 ) {
-  const _id = prevState._id;
   const entry = {
-    _id,
+    _id: formData.get('_id') as string,
     description: formData.get('description') as string,
     status: formData.get('status') as EntryStatus,
   };
-  const res = await updateEntryDB(_id, entry);
+  const res = await updateEntryDB(entry._id, entry);
+  revalidatePath(`/entries/${entry._id}`);
+  revalidatePath('/');
   return JSON.stringify(res.body);
 }

@@ -1,16 +1,9 @@
 'use client';
-import { updateEntryAction } from '@/components/ui/entryActions';
+import { updateEntryAction } from '@/context/entries/entryActions';
 import { Entry, EntryEnum } from '@/interfaces';
-import {
-  FC,
-  ReactNode,
-  useEffect,
-  useReducer,
-  useRef,
-  useTransition,
-} from 'react';
+import { useSnackbar } from 'notistack';
+import { FC, ReactNode, useReducer, useRef, useTransition } from 'react';
 import { EntriesContext, entriesReducer } from '.';
-import { entriesServer } from './entriesServer';
 
 export interface EntriesState {
   entries: Entry[];
@@ -26,9 +19,9 @@ const ENTRIES_INITIAL_STATE: EntriesState = {
 
 export const EntriesProvider: FC<Props> = ({ children }) => {
   const [state, dispatch] = useReducer(entriesReducer, ENTRIES_INITIAL_STATE);
+  const { enqueueSnackbar } = useSnackbar();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [pendingUpdate, startTransitionUpdate] = useTransition();
-  const [pendingEntries, startTransitionEntries] = useTransition();
   const updatedId = useRef({});
 
   const addNewEntry = (entry: Entry) => {
@@ -49,20 +42,13 @@ export const EntriesProvider: FC<Props> = ({ children }) => {
       });
     } else {
       dispatch({ type: EntryEnum.ENTRY_UPDATED, payload: entry });
+      enqueueSnackbar('Entry updated', { variant: 'success' });
     }
   };
 
-  const refreshEntries = () => {
-    console.log('refreshEntries');
-    startTransitionEntries(async () => {
-      const entries = JSON.parse(await entriesServer());
-      dispatch({ type: EntryEnum.SET_ENTRIES, payload: entries });
-    });
+  const refreshEntries = (entries: Entry[]) => {
+    dispatch({ type: EntryEnum.SET_ENTRIES, payload: entries });
   };
-
-  useEffect(() => {
-    refreshEntries();
-  }, []);
 
   return (
     <EntriesContext.Provider
@@ -72,7 +58,6 @@ export const EntriesProvider: FC<Props> = ({ children }) => {
         updateEntry,
         updatedId,
         refreshEntries,
-        pendingEntries,
       }}
     >
       {children}

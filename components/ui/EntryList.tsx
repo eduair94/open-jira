@@ -14,7 +14,6 @@ interface Props {
 
 export const EntryList: FC<Props> = ({ status }) => {
   const { entries, updateEntry, updatedId } = useContext(EntriesContext);
-  console.log('Entries LIst', entries);
   const { isDragging, endDragging } = useContext(UIContext);
 
   const entriesByStatus = useMemo(

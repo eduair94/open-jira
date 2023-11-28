@@ -4,16 +4,32 @@ import { UIContext } from '@/context/ui';
 import { Entry } from '@/interfaces';
 import AddIcon from '@mui/icons-material/Add';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
+import LoadingButton from '@mui/lab/LoadingButton';
 import { Box, Button, Collapse, TextField } from '@mui/material';
 import { ChangeEvent, useContext, useEffect, useState } from 'react';
 import { useFormState, useFormStatus } from 'react-dom';
-import { addEntryAction } from './entryActions';
+import { addEntryAction } from '../../context/entries/entryActions';
+
+const SubmitBtn = () => {
+  const { pending } = useFormStatus();
+  return (
+    <LoadingButton
+      type="submit"
+      loading={pending}
+      loadingIndicator="Loading…"
+      variant="outlined"
+      color="secondary"
+      endIcon={<SaveOutlinedIcon />}
+    >
+      Save
+    </LoadingButton>
+  );
+};
 
 export const NewEntry = () => {
   const [inputValue, setInputValue] = useState('');
   const [touched, setTouched] = useState(false);
   const { addNewEntry } = useContext(EntriesContext);
-  const { pending } = useFormStatus();
   const [formActionState, formAction] = useFormState(addEntryAction, null);
 
   const { setIsAddingEntry, isAddingEntry } = useContext(UIContext);
@@ -40,6 +56,7 @@ export const NewEntry = () => {
 
   useEffect(() => {
     if (formActionState) {
+      console.log('add new entry', formActionState);
       addNewEntry(JSON.parse(formActionState) as Entry);
       setTouched(false);
       setInputValue('');
@@ -74,15 +91,7 @@ export const NewEntry = () => {
             <Button className="cancel-btn" onClick={onCancel} variant="text">
               Cancel
             </Button>
-            <Button
-              disabled={pending}
-              type="submit"
-              variant="outlined"
-              color="secondary"
-              endIcon={<SaveOutlinedIcon />}
-            >
-              Save
-            </Button>
+            <SubmitBtn />
           </Box>
         </form>
       </Collapse>

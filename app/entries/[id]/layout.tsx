@@ -1,4 +1,4 @@
-import { entryServerById } from '@/context/entries/entriesServer';
+import { entryServerById } from '@/context/entries/entryServer';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
