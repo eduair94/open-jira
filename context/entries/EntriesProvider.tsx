@@ -20,7 +20,6 @@ const ENTRIES_INITIAL_STATE: EntriesState = {
 export const EntriesProvider: FC<Props> = ({ children }) => {
   const [state, dispatch] = useReducer(entriesReducer, ENTRIES_INITIAL_STATE);
   const { enqueueSnackbar } = useSnackbar();
-  const init = useRef(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [pendingUpdate, startTransitionUpdate] = useTransition();
   const updatedId = useRef({});
@@ -29,32 +28,29 @@ export const EntriesProvider: FC<Props> = ({ children }) => {
     dispatch({ type: EntryEnum.ADD, payload: entry });
   };
 
-  const updateEntry = (entry: Entry, clientOnly = false) => {
-    if (!clientOnly) {
-      updatedId.current = { [entry._id]: true };
-      startTransitionUpdate(async () => {
-        await updateEntryAction({
-          _id: entry._id,
-          status: entry.status,
-          description: entry.description,
-        });
-        dispatch({ type: EntryEnum.ENTRY_UPDATED, payload: entry });
-        updatedId.current = {};
+  const updateEntryPage = () => {
+    enqueueSnackbar('Entry updated', {
+      variant: 'success',
+      persist: false,
+      autoHideDuration: 1500,
+    });
+  };
+
+  const updateEntry = (entry: Entry) => {
+    updatedId.current = { [entry._id]: true };
+    startTransitionUpdate(async () => {
+      await updateEntryAction({
+        _id: entry._id,
+        status: entry.status,
+        description: entry.description,
       });
-    } else {
       dispatch({ type: EntryEnum.ENTRY_UPDATED, payload: entry });
-      enqueueSnackbar('Entry updated', {
-        variant: 'success',
-        persist: false,
-        autoHideDuration: 1500,
-      });
-    }
+      updatedId.current = {};
+    });
   };
 
   const refreshEntries = (entries: Entry[]) => {
-    if (!init.current)
-      dispatch({ type: EntryEnum.SET_ENTRIES, payload: entries });
-    init.current = true;
+    dispatch({ type: EntryEnum.SET_ENTRIES, payload: entries });
   };
 
   const deleteEntry = (entry: Entry) => {
@@ -72,6 +68,7 @@ export const EntriesProvider: FC<Props> = ({ children }) => {
         ...state,
         addNewEntry,
         updateEntry,
+        updateEntryPage,
         updatedId,
         refreshEntries,
         deleteEntry,

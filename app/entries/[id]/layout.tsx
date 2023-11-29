@@ -1,18 +1,19 @@
 import { entryServerById } from '@/context/entries/entryServer';
-import type { Metadata } from 'next';
-
-export const metadata: Metadata = {
-  title: 'Home - Open Jira App',
-  description: 'Open Jira App',
-};
+import { Entry } from '@/interfaces';
 
 interface Props {
   children: React.ReactNode;
-  params: { id: string; entry: string };
+  params: { id: string };
 }
 
-export default async function Layout({ children, params }: Props) {
-  const { id } = params;
-  params.entry = (await entryServerById(id)) as string;
+export default async function Layout({ children }: Props) {
   return <>{children}</>;
+}
+
+export async function generateMetadata({ params }: Props) {
+  const { id } = params;
+  const entry = JSON.parse((await entryServerById(id)) as string) as Entry;
+  return {
+    title: entry.description,
+  };
 }

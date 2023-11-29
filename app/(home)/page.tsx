@@ -1,24 +1,25 @@
 'use client';
-import { NewEntry } from '@/components/ui';
+import { Loading, NewEntry } from '@/components/ui';
 import { EntryList } from '@/components/ui/EntryList';
 import { EntriesContext } from '@/context/entries';
+import { entriesServer } from '@/context/entries/entryServer';
 import { Card, CardHeader, Grid } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { NextPage } from 'next';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState, useTransition } from 'react';
 
-interface Props {
-  params: {
-    entries: string;
-  };
-}
-
-const Home: NextPage<Props> = ({ params }) => {
+const Home: NextPage = () => {
   const { refreshEntries } = useContext(EntriesContext);
+  const [isLoading, setIsLoading] = useState(true);
 
+  const [, startTransition] = useTransition();
   useEffect(() => {
-    refreshEntries(JSON.parse(params.entries));
-  }, [params.entries]);
+    startTransition(async () => {
+      const entries = JSON.parse(await entriesServer());
+      refreshEntries(entries);
+      setIsLoading(false);
+    });
+  }, []);
 
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === 'dark';
@@ -45,6 +46,7 @@ const Home: NextPage<Props> = ({ params }) => {
 
   return (
     <Grid container spacing={2}>
+      {isLoading && <Loading />}
       <Grid item xs={12} sm={4}>
         <Card sx={cardStyle}>
           <CardHeader sx={styleCardHeader} title="Pending" />

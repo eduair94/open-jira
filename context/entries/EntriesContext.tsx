@@ -6,7 +6,8 @@ import { MutableRefObject, createContext } from 'react';
 interface ContextProps {
   entries: Entry[];
   addNewEntry: (entry: Entry) => void;
-  updateEntry: (entry: Entry, clientOnly?: boolean) => void;
+  updateEntryPage: () => void;
+  updateEntry: (entry: Entry) => void;
   updatedId: MutableRefObject<{ [key: string]: boolean }>;
   refreshEntries: (entries: Entry[]) => void;
   deleteEntry: (entry: Entry) => void;

@@ -1,7 +1,8 @@
 'use client';
-import { DeleteEntry } from '@/components/ui';
+import { DeleteEntry, Loading } from '@/components/ui';
 import { EntriesContext } from '@/context/entries';
 import { updateEntryActionPage } from '@/context/entries/entryActions';
+import { entryServerById } from '@/context/entries/entryServer';
 import { Entry, EntryStatus } from '@/interfaces';
 import { dateFunctions } from '@/utils';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
@@ -22,14 +23,17 @@ import {
   capitalize,
 } from '@mui/material';
 import { NextPage } from 'next';
-import { FC, useContext, useEffect, useMemo, useState } from 'react';
+import {
+  FC,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  useTransition,
+} from 'react';
 import { useFormState, useFormStatus } from 'react-dom';
 
 const validStatus: EntryStatus[] = ['pending', 'in-progress', 'finished'];
-
-interface Props {
-  params: { id: string; entry: string };
-}
 
 const SubmitBtn: FC<{ inputValue: string }> = ({ inputValue }) => {
   const { pending } = useFormStatus();
@@ -48,15 +52,18 @@ const SubmitBtn: FC<{ inputValue: string }> = ({ inputValue }) => {
   );
 };
 
-const EntryPage: NextPage<Props> = ({ params }) => {
-  const { entry: entryString } = params;
-  const entry = JSON.parse(entryString);
+interface PropsContent {
+  entry: Entry;
+}
+
+const EntryPageContent: FC<PropsContent> = ({ entry }) => {
   const [inputValue, setInputValue] = useState(entry.description);
   const [status, setStatus] = useState<EntryStatus>(entry.status);
+  const { updateEntryPage } = useContext(EntriesContext);
   const [touched, setTouched] = useState(false);
-  const { updateEntry } = useContext(EntriesContext);
 
   const onInputValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    document.title = event.target.value;
     setInputValue(event.target.value);
   };
 
@@ -69,15 +76,11 @@ const EntryPage: NextPage<Props> = ({ params }) => {
     [touched, inputValue],
   );
 
-  const [formActionState, formAction] = useFormState(
-    updateEntryActionPage,
-    null,
-  );
+  const [formState, formAction] = useFormState(updateEntryActionPage, null);
 
   useEffect(() => {
-    if (!formActionState) return;
-    updateEntry(JSON.parse(formActionState) as Entry, true);
-  }, [formActionState]);
+    if (formState) updateEntryPage();
+  }, [formState]);
 
   return (
     <div>
@@ -85,12 +88,13 @@ const EntryPage: NextPage<Props> = ({ params }) => {
         <Grid item xs={12} sm={8} md={6}>
           <Card>
             <form action={formAction}>
-              <input type="hidden" value={entry._id} name="_id" />
+              <input type="hidden" value={entry?._id} name="_id" />
               <CardHeader
                 title="Entry:"
-                subheader={`Created ${dateFunctions.getFormatDistanceToNow(
-                  entry.createdAt,
-                )}`}
+                subheader={`Created ${
+                  entry?.createdAt &&
+                  dateFunctions.getFormatDistanceToNow(entry.createdAt)
+                }`}
               ></CardHeader>
               <CardContent>
                 <TextField
@@ -134,9 +138,27 @@ const EntryPage: NextPage<Props> = ({ params }) => {
           </Card>
         </Grid>
       </Grid>
-      <DeleteEntry entry={entry} />
+      {entry && <DeleteEntry entry={entry} />}
     </div>
   );
 };
 
+interface Props {
+  params: {
+    id: string;
+  };
+}
+
+const EntryPage: NextPage<Props> = ({ params }) => {
+  const [, startTransition] = useTransition();
+  const [entry, setEntry] = useState<Entry | null>(null);
+  useEffect(() => {
+    startTransition(async () => {
+      const entry = JSON.parse(await entryServerById(params.id)) as Entry;
+      setEntry(entry);
+    });
+  }, []);
+
+  return <>{!entry ? <Loading /> : <EntryPageContent entry={entry} />}</>;
+};
 export default EntryPage;

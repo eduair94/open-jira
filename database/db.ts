@@ -6,7 +6,6 @@ const mongoConnection = {
 
 export const connect = async () => {
   if (mongoConnection.isConnected === ConnectionStates.connected) {
-    console.log('Already connected to MongoDB');
     return;
   }
   if (mongoose.connections.length > 0) {

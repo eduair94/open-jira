@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-page-custom-font */
 import { Layout } from '@/components/layouts';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
