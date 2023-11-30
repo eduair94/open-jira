@@ -1,16 +1,16 @@
-import mongoose, { ConnectionStates } from 'mongoose';
+import mongoose from 'mongoose';
 
 const mongoConnection = {
-  isConnected: ConnectionStates.disconnected,
+  isConnected: 0,
 };
 
 export const connect = async () => {
-  if (mongoConnection.isConnected === ConnectionStates.connected) {
+  if (mongoConnection.isConnected === 1) {
     return;
   }
-  if (mongoose.connections.length > 0) {
+  if (mongoose.connections && mongoose.connections.length > 0) {
     mongoConnection.isConnected = mongoose.connections[0].readyState;
-    if (mongoConnection.isConnected === ConnectionStates.connected) {
+    if (mongoConnection.isConnected === 1) {
       console.log('Use existing database connection');
       return;
     }
@@ -18,13 +18,13 @@ export const connect = async () => {
   }
 
   await mongoose.connect(process.env.MONGO_URL as string);
-  mongoConnection.isConnected = ConnectionStates.connected;
+  mongoConnection.isConnected = 1;
   console.log('Connected to MongoDB', process.env.MONGO_URL);
 };
 
 export const disconnect = async () => {
-  if (mongoConnection.isConnected === ConnectionStates.connected) return;
+  if (mongoConnection.isConnected === 1) return;
   await mongoose.disconnect();
-  mongoConnection.isConnected = ConnectionStates.disconnected;
+  mongoConnection.isConnected = 0;
   console.log('Disconnected from MongoDB');
 };

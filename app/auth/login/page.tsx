@@ -13,7 +13,7 @@ const LoginPage = () => {
         alignItems: 'center',
       }}
     >
-      <Button onClick={() => signIn('google')} variant="outlined">
+      <Button onClick={() => signIn()} variant="outlined">
         Login
       </Button>
     </Box>

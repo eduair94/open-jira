@@ -6,13 +6,12 @@ import { db } from '.';
 
 export const getEntriesDB = async (): Promise<IEntry[]> => {
   const user = await auth();
-  console.log(user);
   await db.connect();
   const entries: IEntry[] = await Entry.find().sort({
     createdAt: -1,
   });
   await db.disconnect();
-  return user;
+  return entries;
 };
 
 export const newEntryDB = async (description: string) => {
