@@ -1,5 +1,6 @@
-import { auth } from '@/auth';
+import NextAuth from 'next-auth';
 import { NextResponse } from 'next/server';
+import authConfig from './auth.config';
 
 // Limit the middleware to paths starting with `/api/`
 export const config = {
@@ -8,6 +9,8 @@ export const config = {
     '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
 };
+
+const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
   const auth = req.auth;

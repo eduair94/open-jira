@@ -1,9 +1,12 @@
+import { ObjectId } from 'mongodb';
+
 /* eslint-disable no-unused-vars */
 export interface Entry {
   _id: string;
   description: string;
   createdAt: number;
   status: EntryStatus;
+  user: ObjectId;
 }
 
 export interface EntryMin {

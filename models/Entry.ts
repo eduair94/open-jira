@@ -1,5 +1,5 @@
 import { Entry } from '@/interfaces';
-import mongoose, { Model, Schema } from 'mongoose';
+import { Model, Schema, model, models } from 'mongoose';
 
 export interface IEntry extends Entry {}
 
@@ -14,9 +14,13 @@ const entrySchema = new Schema({
       message: '{VALUE} is not a supported status',
     },
   },
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
 });
 
-const EntryModel: Model<IEntry> =
-  mongoose.models.Entry || mongoose.model('Entry', entrySchema);
+const EntryModel: Model<IEntry> = models.Entry || model('Entry', entrySchema);
 
 export default EntryModel;

@@ -1,21 +1,19 @@
+import { auth } from '@/auth';
 import { db } from '@/database';
-import {
-  getEntriesDB,
-  getEntryDB,
-  newEntryDB,
-  updateEntryDB,
-} from '@/database/dbEntries';
+import { getEntryDB, newEntryDB, updateEntryDB } from '@/database/dbEntries';
 import { NextRequest } from 'next/server';
 
 export const getEntries = async () => {
-  try {
-    const entries = await getEntriesDB();
-    return Response.json(entries, { status: 200 });
-  } catch (e) {
-    await db.disconnect();
-    console.error(e);
-    return Response.json({ success: false }, { status: 500 });
-  }
+  const user = await auth();
+  return Response.json(user);
+  // try {
+  //   const entries = await getEntriesDB();
+  //   return Response.json(entries, { status: 200 });
+  // } catch (e) {
+  //   await db.disconnect();
+  //   console.error(e);
+  //   return Response.json({ success: false }, { status: 500 });
+  // }
 };
 
 export const newEntry = async (req: Request) => {

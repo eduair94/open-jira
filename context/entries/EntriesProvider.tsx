@@ -1,6 +1,7 @@
 'use client';
 import { updateEntryAction } from '@/context/entries/entryActions';
 import { Entry, EntryEnum } from '@/interfaces';
+import { useSession } from 'next-auth/react';
 import { useSnackbar } from 'notistack';
 import * as NProgress from 'nprogress';
 import {
@@ -76,14 +77,16 @@ export const EntriesProvider: FC<Props> = ({ children }) => {
   };
 
   const [, startTransition] = useTransition();
+  const session = useSession();
   useEffect(() => {
+    if (!session.data?.user) return;
     startTransition(async () => {
       const entries = JSON.parse(await entriesServer());
       refreshEntries(entries);
       setIsLoading(false);
       NProgress.done();
     });
-  }, []);
+  }, [session.data?.user]);
 
   return (
     <EntriesContext.Provider

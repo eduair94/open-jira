@@ -7,3 +7,5 @@ export async function GET(): Promise<Response> {
 export async function POST(req: Request): Promise<Response> {
   return newEntry(req);
 }
+
+export const runtime = 'nodejs';

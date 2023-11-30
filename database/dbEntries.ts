@@ -1,13 +1,15 @@
 import { auth } from '@/auth';
 import { EntryMin } from '@/interfaces';
 import { Entry, IEntry } from '@/models';
-import mongoose, { isValidObjectId } from 'mongoose';
+import mongoose, { Types, isValidObjectId } from 'mongoose';
 import { db } from '.';
 
 export const getEntriesDB = async (): Promise<IEntry[]> => {
-  const user = await auth();
+  const session = await auth();
+  if (!session || !session.user) throw new Error('No session found');
+  const user = new mongoose.mongo.ObjectId(session.user.id);
   await db.connect();
-  const entries: IEntry[] = await Entry.find().sort({
+  const entries: IEntry[] = await Entry.find({ user }).sort({
     createdAt: -1,
   });
   await db.disconnect();
@@ -15,9 +17,12 @@ export const getEntriesDB = async (): Promise<IEntry[]> => {
 };
 
 export const newEntryDB = async (description: string) => {
+  const session = await auth();
+  if (!session || !session.user) throw new Error('No session found');
   const newEntry = new Entry({
     description,
   });
+  newEntry.user = new Types.ObjectId(session.user.id);
   await db.connect();
   const res = await newEntry.save();
   await db.disconnect();
@@ -31,8 +36,11 @@ export const updateEntryDB = async (id: string, body: EntryMin) => {
       body: { message: 'Invalid ID' },
     };
   }
+  const session = await auth();
+  if (!session || !session.user) throw new Error('No session found');
+  const user = new Types.ObjectId(session.user.id);
   await db.connect();
-  const entryToUpdate = await Entry.findById(id);
+  const entryToUpdate = await Entry.findOne({ _id: id, user });
   if (!entryToUpdate) {
     await db.disconnect();
     return {
@@ -68,12 +76,18 @@ export const updateEntryDB = async (id: string, body: EntryMin) => {
 
 export const getEntryDB = async (id: string): Promise<IEntry | null> => {
   if (!isValidObjectId(id)) return null;
+  const session = await auth();
+  if (!session || !session.user) throw new Error('No session found');
+  const user = new Types.ObjectId(session.user.id);
   await db.connect();
-  const entry = await Entry.findById(id).lean();
+  const entry = await Entry.findOne({ _id: id, user }).lean();
   await db.disconnect();
   return entry;
 };
 
 export const deleteEntryDB = async (id: string) => {
-  await Entry.findByIdAndDelete(id);
+  const session = await auth();
+  if (!session || !session.user) throw new Error('No session found');
+  const user = new Types.ObjectId(session.user.id);
+  await Entry.findOneAndDelete({ _id: id, user });
 };
