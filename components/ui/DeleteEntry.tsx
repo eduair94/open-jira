@@ -4,7 +4,8 @@ import { deleteEntryAction } from '@/context/entries/entryActions';
 import { Entry } from '@/interfaces';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import { IconButton, SxProps, Theme } from '@mui/material';
-import { redirect } from 'next/navigation';
+import { redirect, usePathname } from 'next/navigation';
+import * as NProgress from 'nprogress';
 import { FC, MouseEvent, useContext, useMemo, useTransition } from 'react';
 
 interface Props {
@@ -23,6 +24,7 @@ const styleProps = {
 export const DeleteEntry: FC<Props> = ({ entry, isCard }) => {
   const [pendingDelete, startTransactionDelete] = useTransition();
   const { deleteEntry } = useContext(EntriesContext);
+  const pathname = usePathname();
 
   const onDeleteEntry = (event: MouseEvent) => {
     event.stopPropagation();
@@ -30,7 +32,8 @@ export const DeleteEntry: FC<Props> = ({ entry, isCard }) => {
     startTransactionDelete(async () => {
       await deleteEntryAction(entry);
       deleteEntry(entry);
-      redirect('/');
+      if (pathname !== '/') redirect('/');
+      NProgress.done();
     });
   };
 

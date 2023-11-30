@@ -23,6 +23,7 @@ import {
   capitalize,
 } from '@mui/material';
 import { NextPage } from 'next';
+import * as NProgress from 'nprogress';
 import {
   FC,
   useContext,
@@ -79,7 +80,7 @@ const EntryPageContent: FC<PropsContent> = ({ entry }) => {
   const [formState, formAction] = useFormState(updateEntryActionPage, null);
 
   useEffect(() => {
-    if (formState) updateEntryPage();
+    if (formState) updateEntryPage(JSON.parse(formState) as Entry);
   }, [formState]);
 
   return (
@@ -156,6 +157,7 @@ const EntryPage: NextPage<Props> = ({ params }) => {
     startTransition(async () => {
       const entry = JSON.parse(await entryServerById(params.id)) as Entry;
       setEntry(entry);
+      NProgress.done();
     });
   }, []);
 

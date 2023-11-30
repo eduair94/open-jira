@@ -1,13 +1,18 @@
+import { auth } from '@/auth';
 import { EntryMin } from '@/interfaces';
 import { Entry, IEntry } from '@/models';
 import mongoose, { isValidObjectId } from 'mongoose';
 import { db } from '.';
 
 export const getEntriesDB = async (): Promise<IEntry[]> => {
+  const user = await auth();
+  console.log(user);
   await db.connect();
-  const entries: IEntry[] = await Entry.find().sort({ createdAt: -1 });
+  const entries: IEntry[] = await Entry.find().sort({
+    createdAt: -1,
+  });
   await db.disconnect();
-  return entries;
+  return user;
 };
 
 export const newEntryDB = async (description: string) => {

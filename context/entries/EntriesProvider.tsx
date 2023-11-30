@@ -2,8 +2,18 @@
 import { updateEntryAction } from '@/context/entries/entryActions';
 import { Entry, EntryEnum } from '@/interfaces';
 import { useSnackbar } from 'notistack';
-import { FC, ReactNode, useReducer, useRef, useTransition } from 'react';
+import * as NProgress from 'nprogress';
+import {
+  FC,
+  ReactNode,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+  useTransition,
+} from 'react';
 import { EntriesContext, entriesReducer } from '.';
+import { entriesServer } from './entryServer';
 
 export interface EntriesState {
   entries: Entry[];
@@ -20,6 +30,7 @@ const ENTRIES_INITIAL_STATE: EntriesState = {
 export const EntriesProvider: FC<Props> = ({ children }) => {
   const [state, dispatch] = useReducer(entriesReducer, ENTRIES_INITIAL_STATE);
   const { enqueueSnackbar } = useSnackbar();
+  const [isLoadingEntries, setIsLoading] = useState(true);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [pendingUpdate, startTransitionUpdate] = useTransition();
   const updatedId = useRef({});
@@ -28,7 +39,8 @@ export const EntriesProvider: FC<Props> = ({ children }) => {
     dispatch({ type: EntryEnum.ADD, payload: entry });
   };
 
-  const updateEntryPage = () => {
+  const updateEntryPage = (entry: Entry) => {
+    dispatch({ type: EntryEnum.ENTRY_UPDATED, payload: entry });
     enqueueSnackbar('Entry updated', {
       variant: 'success',
       persist: false,
@@ -46,6 +58,7 @@ export const EntriesProvider: FC<Props> = ({ children }) => {
       });
       dispatch({ type: EntryEnum.ENTRY_UPDATED, payload: entry });
       updatedId.current = {};
+      NProgress.done();
     });
   };
 
@@ -62,6 +75,16 @@ export const EntriesProvider: FC<Props> = ({ children }) => {
     });
   };
 
+  const [, startTransition] = useTransition();
+  useEffect(() => {
+    startTransition(async () => {
+      const entries = JSON.parse(await entriesServer());
+      refreshEntries(entries);
+      setIsLoading(false);
+      NProgress.done();
+    });
+  }, []);
+
   return (
     <EntriesContext.Provider
       value={{
@@ -72,6 +95,7 @@ export const EntriesProvider: FC<Props> = ({ children }) => {
         updatedId,
         refreshEntries,
         deleteEntry,
+        isLoadingEntries,
       }}
     >
       {children}

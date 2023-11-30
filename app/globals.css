@@ -80,3 +80,9 @@ body .loading_screen {
     transform: rotate(-1turn);
   }
 }
+
+/* Active Link */
+
+.active-link {
+  opacity: 0.5;
+}

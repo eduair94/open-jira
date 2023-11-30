@@ -1,51 +1,42 @@
 'use client';
 
 import { UIContext } from '@/context/ui';
-import InboxOutlined from '@mui/icons-material/InboxOutlined';
-import MailOutlineOutlined from '@mui/icons-material/MailOutlineOutlined';
-import {
-  Box,
-  Divider,
-  Drawer,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Typography,
-} from '@mui/material';
+import { Box, Drawer, FormControlLabel, Typography } from '@mui/material';
 import { useContext } from 'react';
-
-const menuItems = ['Inbox', 'Starred', 'Send email', 'Drafts'];
+import { EntrySideBarList } from './EntrySideBarList';
+import { MaterialUISwitch } from './MaterialUISwitch';
 
 export const Sidebar = () => {
   const { sideMenuOpen, closeSideMenu } = useContext(UIContext);
+  const { theme, setTheme } = useContext(UIContext);
+
+  const onUpdateTheme = () => {
+    if (theme === 'dark') setTheme('light');
+    else setTheme('dark');
+  };
+
   return (
     <Drawer anchor="left" open={sideMenuOpen} onClose={closeSideMenu}>
       <Box sx={{ width: 250 }}>
-        <Box sx={{ padding: '10px 16px 0px' }}>
+        <Box sx={{ padding: '10px 16px 8px 16px' }}>
           <Typography variant="h4">Menu</Typography>
         </Box>
-        <List>
-          {menuItems.map((text, index) => (
-            <ListItem key={text}>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxOutlined /> : <MailOutlineOutlined />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          {menuItems.map((text, index) => (
-            <ListItem key={text}>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxOutlined /> : <MailOutlineOutlined />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
-        </List>
+        <Box sx={{ paddingX: 2 }}>
+          <FormControlLabel
+            control={
+              <MaterialUISwitch
+                checked={theme === 'dark'}
+                onChange={() => onUpdateTheme()}
+                sx={{ m: 1 }}
+                defaultChecked
+              />
+            }
+            label="Change theme"
+          />
+        </Box>
+        <EntrySideBarList status="pending" />
+        <EntrySideBarList status="in-progress" />
+        <EntrySideBarList status="finished" />
       </Box>
     </Drawer>
   );

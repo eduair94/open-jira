@@ -1,7 +1,7 @@
 'use client';
 
 import { UIActionEnum } from '@/interfaces';
-import { FC, ReactNode, useReducer } from 'react';
+import { FC, ReactNode, useEffect, useReducer } from 'react';
 import { UIContext, uiReducer } from '.';
 
 export interface UIState {
@@ -36,8 +36,13 @@ export const UIProvider: FC<{ children: ReactNode }> = ({ children }) => {
   };
 
   const setTheme = (theme: string) => {
+    localStorage.setItem('theme', theme);
     dispatch({ type: UIActionEnum.SET_THEME, payload: theme });
   };
+
+  useEffect(() => {
+    setTheme(localStorage.getItem('theme') || 'dark');
+  }, []);
 
   const closeSideMenu = () => dispatch({ type: UIActionEnum.CLOSE_SIDEBAR });
   return (

@@ -2,25 +2,13 @@
 import { Loading, NewEntry } from '@/components/ui';
 import { EntryList } from '@/components/ui/EntryList';
 import { EntriesContext } from '@/context/entries';
-import { entriesServer } from '@/context/entries/entryServer';
 import { Card, CardHeader, Grid } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { NextPage } from 'next';
-import { useContext, useEffect, useState, useTransition } from 'react';
+import { useContext } from 'react';
 
 const Home: NextPage = () => {
-  const { refreshEntries } = useContext(EntriesContext);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const [, startTransition] = useTransition();
-  useEffect(() => {
-    startTransition(async () => {
-      const entries = JSON.parse(await entriesServer());
-      refreshEntries(entries);
-      setIsLoading(false);
-    });
-  }, []);
-
+  const { isLoadingEntries: isLoading } = useContext(EntriesContext);
   const theme = useTheme();
   const isDarkMode = theme.palette.mode === 'dark';
   const cardStyle = {

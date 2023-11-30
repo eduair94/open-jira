@@ -1,5 +1,4 @@
 /* eslint-disable @next/next/no-page-custom-font */
-import { Layout } from '@/components/layouts';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
@@ -32,9 +31,7 @@ export default async function RootLayout({
         />
       </head>
       <body className={inter.className}>
-        <Providers>
-          <Layout>{children}</Layout>
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

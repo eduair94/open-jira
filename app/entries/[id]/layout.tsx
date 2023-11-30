@@ -1,13 +1,15 @@
+import { Layout } from '@/components/layouts';
 import { entryServerById } from '@/context/entries/entryServer';
 import { Entry } from '@/interfaces';
+import { ReactNode } from 'react';
 
 interface Props {
-  children: React.ReactNode;
+  children: ReactNode;
   params: { id: string };
 }
 
-export default async function Layout({ children }: Props) {
-  return <>{children}</>;
+export default async function EntriesLayout({ children }: Props) {
+  return <Layout>{children}</Layout>;
 }
 
 export async function generateMetadata({ params }: Props) {
