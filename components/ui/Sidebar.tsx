@@ -22,7 +22,7 @@ export const Sidebar = () => {
       <Box sx={{ width: 250 }}>
         <Box sx={{ padding: '10px 16px 8px 16px' }}>
           <Typography variant="h6">
-            {status === 'authenticated' ? session.user.name : ''}
+            {status === 'authenticated' ? session.user?.name : ''}
           </Typography>
         </Box>
         <Box sx={{ paddingX: 2 }}>
