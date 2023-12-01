@@ -11,11 +11,10 @@ export const {
   adapter: MongoDBAdapter(clientPromise),
   ...authConfig,
   callbacks: {
-    async signIn(user) {
-      //user.userId = user.user._id;
+    async signIn() {
       return true;
     },
-    async jwt({ token, user, account, profile }) {
+    async jwt({ token, user }) {
       if (user) {
         token.userId = user.id;
         return token;
