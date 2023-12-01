@@ -4,6 +4,10 @@ import { Entry, IEntry } from '@/models';
 import mongoose, { Types, isValidObjectId } from 'mongoose';
 import { db } from '.';
 
+/**
+ * Fetches all entries from the database.
+ * @returns {Promise<IEntry[]>} A promise that resolves to an array of entries.
+ */
 export const getEntriesDB = async (): Promise<IEntry[]> => {
   const session = await auth();
   if (!session || !session.user) throw new Error('No session found');
@@ -16,6 +20,11 @@ export const getEntriesDB = async (): Promise<IEntry[]> => {
   return entries;
 };
 
+/**
+ * Creates a new entry in the database.
+ * @param {string} description - The description of the new entry.
+ * @returns {Promise<IEntry>} A promise that resolves to the created entry.
+ */
 export const newEntryDB = async (description: string) => {
   const session = await auth();
   if (!session || !session.user) throw new Error('No session found');
@@ -29,6 +38,12 @@ export const newEntryDB = async (description: string) => {
   return res;
 };
 
+/**
+ * Updates an existing entry in the database.
+ * @param {string} id - The ID of the entry to update.
+ * @param {EntryMin} body - The new data for the entry.
+ * @returns {Promise<{status: number, body: IEntry | {message: string}}>} A promise that resolves to the updated entry or an error message.
+ */
 export const updateEntryDB = async (id: string, body: EntryMin) => {
   if (!mongoose.isValidObjectId(id)) {
     return {
@@ -74,6 +89,11 @@ export const updateEntryDB = async (id: string, body: EntryMin) => {
   }
 };
 
+/**
+ * Fetches a single entry from the database.
+ * @param {string} id - The ID of the entry to fetch.
+ * @returns {Promise<IEntry | null>} A promise that resolves to the fetched entry or null if not found.
+ */
 export const getEntryDB = async (id: string): Promise<IEntry | null> => {
   if (!isValidObjectId(id)) return null;
   const session = await auth();
@@ -85,6 +105,10 @@ export const getEntryDB = async (id: string): Promise<IEntry | null> => {
   return entry;
 };
 
+/**
+ * Deletes an entry from the database.
+ * @param {string} id - The ID of the entry to delete.
+ */
 export const deleteEntryDB = async (id: string) => {
   const session = await auth();
   if (!session || !session.user) throw new Error('No session found');
